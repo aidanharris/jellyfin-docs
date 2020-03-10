@@ -180,23 +180,8 @@ Go to the domain you used earlier in the config file and your Jellyfin server wi
 
 ```
 version: '3.5'
-networks:
-  traefik:
-    name: traefik
 
 services:
-  traefik:
-    container_name: traefik
-    image: traefik:v1.7
-    networks:
-      - traefik
-    environment:
-      - DUCKDNS_TOKEN=redacted
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/traefik.toml
-      - ./acme.json:/acme.json
-
   duckdns:
     image: linuxserver/duckdns
     container_name: duckdns
