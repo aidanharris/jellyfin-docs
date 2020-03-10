@@ -23,6 +23,9 @@ This command automatically escapes all $ inside the password for the YML file. I
 
 ```
 version: '3.5'
+networks:
+  traefik:
+    name: traefik
 
 services:
   traefik:
@@ -37,6 +40,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.toml:/traefik.toml
       - ./acme.json:/acme.json
+# optional configuration needed for duckdns
+#    environment:
+#      - DUCKDNS_TOKEN=redacted
     labels:
       traefik.enable: "true"
       traefik.backend: traefik
@@ -68,10 +74,6 @@ services:
       - /path/to/cache:/cache
       - /path/to/media:/media
     restart: unless-stopped
-
-networks:
-  traefik:
-    name: traefik
 ```
 
 This TOML file can't support environment variables, so don't attempt to use variables.
@@ -173,3 +175,39 @@ $ docker-compose up -d
 Congratulations, your stack with Traefik and Jellyfin is running!
 
 Go to the domain you used earlier in the config file and your Jellyfin server will be running with HTTPS (AES 256) enabled.
+
+### DuckDNS Configuration
+
+```
+version: '3.5'
+networks:
+  traefik:
+    name: traefik
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v1.7
+    networks:
+      - traefik
+    environment:
+      - DUCKDNS_TOKEN=redacted
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+      - ./acme.json:/acme.json
+
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    environment:
+     # - PUID=1000 #optional
+     # - PGID=1000 #optional
+      - TZ=America/New_York
+      - SUBDOMAINS=example.duckdns.org
+      - TOKEN=redacted
+      - LOG_FILE=false #optional
+   # volumes:
+   #   - </path/to/appdata/config>:/config #optional
+    restart: unless-stopped
+```
