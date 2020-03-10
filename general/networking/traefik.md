@@ -19,6 +19,12 @@ $ echo $(htpasswd -nb username mystrongpassword) | sed -e s/\\$/\\$\\$/g
 
 This command automatically escapes all $ inside the password for the YML file. If using an environment file, it does not need the $ escaped since it will not be interpreted by the shell.
 
+Create the docker network for traefik.
+
+```bash
+$ sudo docker network create traefik
+```
+
 ### docker-compose.yml
 
 ```
